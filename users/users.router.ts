@@ -47,7 +47,8 @@ class UsersRouter extends Router {
 
         application.put('/users/:id', (req, res, next) => {
 
-            const options = {overwrite: true} //COMO O OVERWRITE ESTÁ TRUE, ELE VAI APAGAR OS VALORES QUE NÃO FOREM PASSADOS NA REQ NA BASE
+            const options = {runValidators: true,
+                             overwrite: true} //COMO O OVERWRITE ESTÁ TRUE, ELE VAI APAGAR OS VALORES QUE NÃO FOREM PASSADOS NA REQ NA BASE
 
             User.update({_id: req.params.id}, req.body, options)
                 .exec()
@@ -70,7 +71,8 @@ class UsersRouter extends Router {
 
         application.patch('/users/:id', (req, res, next) => {
 
-            const options = {new: true}
+            const options = {runValidators: true,
+                             new: true}
 
             User.findByIdAndUpdate(req.params.id, req.body, options)
                 .then(this.render(res, next))
