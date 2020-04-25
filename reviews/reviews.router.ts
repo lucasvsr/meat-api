@@ -11,6 +11,18 @@ class ReviewsRouter extends ModelRouter<Review> {
 
     }
 
+    envelope(document) {
+
+        const restId = document.restaurant._id ? document.restaurant._id : document.restaurant 
+
+        let resource = super.envelope(document)
+            resource._links.restaurant = `restaurants/${restId}`
+        
+        return resource
+  
+     }
+  
+
     //TRANSFORMAR OS OBJECTS ID EM ENTIDADES - SOBRESCREVER OS MÉTODOS COMO ABAIXO
     findById = (req, res, next) => {
 
@@ -24,13 +36,13 @@ class ReviewsRouter extends ModelRouter<Review> {
 
     applyRoutes(application: restify.Server) {
         
-        application.get('/reviews', this.findAll)
+        application.get(`${this.basePath}`, this.findAll)
 
-        application.get('/reviews/:id', [this.validateId, this.findById])
+        application.get(`${this.basePath}/:id`, [this.validateId, this.findById])
 
-        application.post('/reviews', this.save)
+        application.post(`${this.basePath}`, this.save)
 
-        application.del('/reviews/:id', [this.validateId, this.delete])
+        application.del(`${this.basePath}/:id`, [this.validateId, this.delete])
 
     }
 

@@ -4,9 +4,22 @@ import { NotFoundError } from 'restify-errors'
 
 export abstract class ModelRouter<D extends mongoose.Document> extends Router {
 
+    basePath: string //o nome base das rotas
+
     constructor(protected model: mongoose.Model<D>) {
 
         super()
+        this.basePath = `/${model.collection.name}`
+
+    }
+
+    envelope(document: any): any {
+
+        let resource = Object.assign({_links:{}}, document.toJSON())
+
+        resource._links.self = `${this.basePath}/${resource._id}`
+
+        return resource
 
     }
 
@@ -23,16 +36,16 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
     findAll = (req, res, next) => {
 
         this.model.find()
-            .then(this.renderAll(res, next))
-            .catch(next)
+                  .then(this.renderAll(res, next))
+                  .catch(next)
 
     }
 
     findById = (req, res, next) => {
 
         this.model.findById(req.params.id)
-            .then(this.render(res, next))
-            .catch(next)
+                  .then(this.render(res, next))
+                  .catch(next)
 
     }
 

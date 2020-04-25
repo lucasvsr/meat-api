@@ -6,6 +6,12 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
     abstract applyRoutes(application: restify.Server)
 
+    envelope(document: any): any {
+        
+        return document
+    
+    }
+
     render(response: restify.Response, next: restify.Next) {
 
         return (document) => {
@@ -13,7 +19,7 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
                 this.emit('beforeRender', document)
 
-                response.json(document)
+                response.json(this.envelope(document))
 
             } else {
 
@@ -32,8 +38,11 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
             if(documents) {
 
-                documents.forEach(document => {
+                documents.forEach((document, index, array) => {
+                    
                     this.emit('beforeRender', document)
+                    array[index] = this.envelope(document)
+
                 })
 
                 response.json(documents)
@@ -43,6 +52,8 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
                 response.json([])
 
             }
+
+            return next()
         }
 
     }
