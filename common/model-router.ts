@@ -5,6 +5,7 @@ import { NotFoundError } from 'restify-errors'
 export abstract class ModelRouter<D extends mongoose.Document> extends Router {
 
     basePath: string //o nome base das rotas
+    pageSize: number = 2
 
     constructor(protected model: mongoose.Model<D>) {
 
@@ -23,6 +24,32 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
 
     }
 
+    envelopeAll(documents: any[], options: any = {}): any {
+
+        let resource: any = {
+
+            _links: {
+
+                self: `${options.url}`
+
+            },
+            items: documents
+
+        }
+
+        if(options.page && options.count && options.pageSize){
+
+            if(options.page > 1) resource._links.previous = `${this.basePath}?_page=${options.page - 1}`
+
+            let remaining = options.count - (options.page * options.pageSize)
+
+            if(remaining > 0) resource._links.next = `${this.basePath}?_page=${options.page + 1}`
+        }
+
+        return resource
+
+    }
+
     validateId = (req, res, next) => {
 
         if(!mongoose.Types.ObjectId.isValid(req.params.id)){
@@ -35,9 +62,28 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
 
     findAll = (req, res, next) => {
 
-        this.model.find()
-                  .then(this.renderAll(res, next))
-                  .catch(next)
+        let page = parseInt(req.query._page || 1)
+        page = page > 0 ? page : 1
+
+        const skip = (page - 1) * this.pageSize
+
+        this.model.count({})
+                  .exec()
+                  .then(count => {
+
+                    this.model.find()
+                              .skip(skip)
+                              .limit(this.pageSize)
+                              .then(this.renderAll(res, next, {page, 
+                                                               count,
+                                                               pageSize: 
+                                                               this.pageSize,
+                                                               url: req.url}))
+                              .catch(next)
+
+                  })
+
+        
 
     }
 

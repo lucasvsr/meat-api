@@ -12,6 +12,12 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
     
     }
 
+    envelopeAll(documents: any[], options: any = {}): any {
+
+        return documents
+
+    }
+
     render(response: restify.Response, next: restify.Next) {
 
         return (document) => {
@@ -31,7 +37,7 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
     }
 
-    renderAll(response: restify.Response, next: restify.Next) {
+    renderAll(response: restify.Response, next: restify.Next, options: any = {}) {
 
         return (documents: any[]) => {
 
@@ -45,11 +51,11 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
                 })
 
-                response.json(documents)
+                response.json(this.envelopeAll(documents, options))
 
             } else {
 
-                response.json([])
+                response.json(this.envelopeAll([]))
 
             }
 
