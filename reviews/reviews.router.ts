@@ -11,7 +11,7 @@ class ReviewsRouter extends ModelRouter<Review> {
 
     }
 
-    //TRANSFORMAR OS OBJECTS ID EM ENTIDADES - 
+    //TRANSFORMAR OS OBJECTS ID EM ENTIDADES - SOBRESCREVER OS MÉTODOS COMO ABAIXO
     findById = (req, res, next) => {
 
         this.model.findById(req.params.id)
