@@ -1,3 +1,4 @@
+import { autenticate } from './../security/auth.handler';
 import * as restify from 'restify'
 import { User } from "./users.model";
 import { ModelRouter } from "../common/model-router";
@@ -53,6 +54,8 @@ class UsersRouter extends ModelRouter<User> {
         application.patch(`${this.basePath}/:id`, [this.validateId, this.update])
 
         application.del(`${this.basePath}/:id`, [this.validateId, this.delete])
+
+        application.post(`${this.basePath}/autenticate`, autenticate)
 
     }
 
