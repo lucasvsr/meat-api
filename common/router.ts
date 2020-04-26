@@ -32,7 +32,7 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
                 throw new NotFoundError('Documento não encontrado')
             }
 
-            return next()
+            return next(false)
         }
 
     }
@@ -59,7 +59,7 @@ export abstract class Router extends EventEmitter{ //A classe EventEmitter permi
 
             }
 
-            return next()
+            return next(false)
         }
 
     }
