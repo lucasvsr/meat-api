@@ -1,11 +1,13 @@
 import 'jest'
 import * as request from 'supertest'
 
-let url: string = (<any>global).url
+const url: string = (<any>global).url
+const auth: string = (<any>global).auth
 
 test('get /users', () => {
 
    return request(url).get('/users')
+                      .set('Authorization', auth)
                       .then(response => {
 
                          expect(response.status).toBe(200)
@@ -18,6 +20,7 @@ test('get /users', () => {
 test('post /users', () => {
 
     return request(url).post('/users')
+                       .set('Authorization', auth)
                        .send({
 
                             name:"Melisenda Magnay",
@@ -44,7 +47,8 @@ test('post /users', () => {
 test('get /users/[ID QUE NAO EXISTE]', () => {
 
     return request(url).get('/users/aaaaa')
-                      .then(response => {
+                       .set('Authorization', auth)
+                       .then(response => {
 
                          expect(response.status).toBe(404)
                          
@@ -56,6 +60,7 @@ test('get /users/[ID QUE NAO EXISTE]', () => {
 test('patch /users/:id', () => {
 
     return request(url).post('/users')
+                       .set('Authorization', auth)
                        .send({
 
                             name:"Melisenda Ribeiro",

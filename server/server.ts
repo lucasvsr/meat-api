@@ -1,5 +1,7 @@
+import { tokenParser } from './../security/token.parser';
 import { handleError } from './error.handler';
 import * as restify from 'restify'
+import * as fs from 'fs'
 import * as mongoose from 'mongoose'
 
 import { environment } from '../common/environment'
@@ -38,14 +40,26 @@ export class Server {
 
             try {
 
-                this.application = restify.createServer({
+                const options: restify.ServerOptions = {
+
                     name: 'meat-api',
                     version: '1.0.0'
-                })
+
+                }
+
+                if(environment.security.enableHTTPS) {
+
+                    options.certificate = fs.readFileSync(environment.security.certificate)
+                    options.key = fs.readFileSync(environment.security.key)
+
+                }
+
+                this.application = restify.createServer(options)
                 
                 this.application.use(restify.plugins.queryParser()) //AQUI INSTALAMOS OS PLUGINS, ALGUNS JÁ VEM NO PACOTE DO RESTIFY
                 this.application.use(restify.plugins.bodyParser()) // CONVERTE O CORPO DA REQ EM JSON
                 this.application.use(mergePatchBodyParser) // CONVERTE O CORPO DA REQ EM JSON
+                this.application.use(tokenParser)
 
                 for (let router of routers){
 
