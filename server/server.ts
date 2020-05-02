@@ -1,3 +1,4 @@
+import { tokenParser } from './../security/token.parser';
 import { handleError } from './error.handler';
 import * as restify from 'restify'
 import * as mongoose from 'mongoose'
@@ -46,6 +47,7 @@ export class Server {
                 this.application.use(restify.plugins.queryParser()) //AQUI INSTALAMOS OS PLUGINS, ALGUNS JÁ VEM NO PACOTE DO RESTIFY
                 this.application.use(restify.plugins.bodyParser()) // CONVERTE O CORPO DA REQ EM JSON
                 this.application.use(mergePatchBodyParser) // CONVERTE O CORPO DA REQ EM JSON
+                this.application.use(tokenParser)
 
                 for (let router of routers){
 
