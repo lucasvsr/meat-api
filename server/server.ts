@@ -40,12 +40,21 @@ export class Server {
 
             try {
 
-                this.application = restify.createServer({
+                const options: restify.ServerOptions = {
+
                     name: 'meat-api',
-                    version: '1.0.0',
-                    certificate: fs.readFileSync('./security/keys/cert.pem'),
-                    key: fs.readFileSync('./security/keys/key.pem'),
-                })
+                    version: '1.0.0'
+
+                }
+
+                if(environment.security.enableHTTPS) {
+
+                    options.certificate = fs.readFileSync(environment.security.certificate)
+                    options.key = fs.readFileSync(environment.security.key)
+
+                }
+
+                this.application = restify.createServer(options)
                 
                 this.application.use(restify.plugins.queryParser()) //AQUI INSTALAMOS OS PLUGINS, ALGUNS JÁ VEM NO PACOTE DO RESTIFY
                 this.application.use(restify.plugins.bodyParser()) // CONVERTE O CORPO DA REQ EM JSON
